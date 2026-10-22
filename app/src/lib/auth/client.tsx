@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useTideCloak } from "@tidecloak/nextjs";
 
 // One sign-in hook for every page. With TideCloak set up it is the real Tide session; without an
@@ -9,6 +9,7 @@ import { useTideCloak } from "@tidecloak/nextjs";
 // require a verified Tide token on the server.
 export type Auth = {
   guest: boolean;
+  simulated?: boolean;
   authenticated: boolean;
   isInitializing: boolean;
   login: () => void;
@@ -58,3 +59,54 @@ export function StaticAuth({ mode, children }: { mode: "guest" | "loading"; chil
 }
 
 export const useAuth = () => useContext(AuthContext) ?? guestAuth;
+
+// Simulated TideCloak session: the access token from /sim/login, kept for this tab only.
+const SIM_KEY = "w2w.simToken";
+
+export function setSimToken(token: string | null) {
+  try {
+    if (token) sessionStorage.setItem(SIM_KEY, token);
+    else sessionStorage.removeItem(SIM_KEY);
+  } catch {}
+}
+
+function readSimToken(): { token: string; claims: Record<string, unknown> } | null {
+  try {
+    const token = sessionStorage.getItem(SIM_KEY);
+    if (!token) return null;
+    const claims = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+    if (typeof claims.exp === "number" && claims.exp * 1000 < Date.now()) {
+      sessionStorage.removeItem(SIM_KEY);
+      return null;
+    }
+    return { token, claims };
+  } catch {
+    return null;
+  }
+}
+
+export function SimAuthProvider({ children }: { children: React.ReactNode }) {
+  const [session, setSession] = useState<ReturnType<typeof readSimToken> | undefined>(undefined);
+  useEffect(() => setSession(readSimToken()), []);
+  const claims = session?.claims ?? {};
+  const roles = ((claims.realm_access as { roles?: string[] } | undefined)?.roles ?? []) as string[];
+  const value: Auth = {
+    guest: false,
+    simulated: true,
+    authenticated: !!session,
+    isInitializing: session === undefined,
+    login: () => window.location.assign(`/sim/login?next=${encodeURIComponent(window.location.pathname + window.location.hash)}`),
+    logout: () => {
+      setSimToken(null);
+      window.location.assign("/");
+    },
+    secureFetch: (url, init) => {
+      const headers = new Headers(init?.headers);
+      if (session) headers.set("Authorization", `Bearer ${session.token}`);
+      return fetch(url, { ...init, headers });
+    },
+    hasRealmRole: (role) => roles.includes(role),
+    getValueFromIdToken: (key) => claims[key],
+  };
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}

@@ -1,9 +1,12 @@
 import { loadTideConfig } from "@/lib/auth/tidecloakConfig";
+import { SIMULATED_TIDE } from "@/lib/authMode";
 
 // Serve adapter JSON for server-side use (e.g. JWT verification).
 // The client-side SDK now imports the adapter JSON directly via TideCloakProvider's config prop.
 // This route remains available for any server-side consumers that need the config.
 export async function GET() {
+  // Simulated TideCloak: the client uses the simulator instead of the real adapter.
+  if (SIMULATED_TIDE) return Response.json({ simulated: true });
   try {
     const config = loadTideConfig();
     return Response.json(config);

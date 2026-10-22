@@ -13,9 +13,12 @@ const sha = (v: string) => createHash("sha256").update(v).digest("hex");
 export const verifiedEmail = (sub: string) => s.verified[sub] ?? null;
 export const emailConfigured = () => !!(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
 
-export async function startVerification(sub: string, email: string) {
+// With `deliver: false` (simulated TideCloak and no Gmail set up) the code is returned instead of
+// emailed, so the demo can show it in a simulated inbox. The check that follows is unchanged.
+export async function startVerification(sub: string, email: string, deliver = true): Promise<string | null> {
   const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
   s.pending[sub] = { email, hash: sha(code), expires: Date.now() + 10 * 60_000, tries: 0 };
+  if (!deliver) return code;
   const transport = nodemailer.createTransport({
     service: "gmail",
     auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
@@ -26,6 +29,7 @@ export async function startVerification(sub: string, email: string) {
     subject: `Your W2W code: ${code}`,
     text: `Your W2W verification code is ${code}. It expires in 10 minutes.\nIf you didn't try to sign in, ignore this email.`,
   });
+  return null;
 }
 
 export function confirmVerification(sub: string, code: string): "ok" | "expired" | "wrong" | "locked" | "none" {

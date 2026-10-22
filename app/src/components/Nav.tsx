@@ -3,7 +3,7 @@
 import { useAuth } from "@/lib/auth/client";
 
 export default function Nav() {
-  const { guest, authenticated, isInitializing, login, logout, getValueFromIdToken } = useAuth();
+  const { guest, simulated, authenticated, isInitializing, login, logout, getValueFromIdToken } = useAuth();
   return (
     <header className="nav">
       <a href="/" className="brand serif">W2W</a>
@@ -11,6 +11,7 @@ export default function Nav() {
       <a href="/#artists" className="navlink">Artists</a>
       <a href="/access" className="navlink">Access rights</a>
       <span className="spacer" />
+      {simulated && <span className="sim-chip" title="Sign-in, roles and access checks are simulated until TideCloak is connected">Simulated TideCloak</span>}
       <a href="/studio#upload" className="pill">＋ Upload your art</a>
       {!isInitializing && authenticated && <a href="/me" className="pill">My profile</a>}
       {!isInitializing && authenticated && <a href="/studio" className="pill">My studio</a>}

@@ -9,7 +9,8 @@ import { useApi } from "@/lib/useApi";
 export default function EmailGate({ children }: { children: React.ReactNode }) {
   const { authenticated } = useAuth();
   const api = useApi();
-  const [status, setStatus] = useState<{ verified: boolean; configured: boolean } | null>(null);
+  const [status, setStatus] = useState<{ verified: boolean; configured: boolean; simulatedInbox?: boolean } | null>(null);
+  const [inbox, setInbox] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
@@ -28,6 +29,7 @@ export default function EmailGate({ children }: { children: React.ReactNode }) {
       const res = await api(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const d = await res.json().catch(() => ({}));
       if (!res.ok) setError(d.error ?? "Something went wrong. Try again.");
+      if (d.simulatedInbox) setInbox(d.simulatedInbox);
       return res.ok;
     } finally {
       setBusy(false);
@@ -73,6 +75,11 @@ export default function EmailGate({ children }: { children: React.ReactNode }) {
           <button className="pill solid" disabled={busy}>{busy ? "Checking…" : "Verify"}</button>
           <button type="button" className="pill" onClick={() => { setSent(false); setCode(""); }}>Use another email</button>
           <p className="muted small" style={{ width: "100%", margin: 0 }}>Code sent to {email}. It expires in 10 minutes.</p>
+          {inbox && (
+            <p className="small" style={{ width: "100%", margin: 0 }}>
+              <span className="sim-chip">Simulated inbox</span> Your W2W code is <b style={{ fontFamily: "var(--mono)", letterSpacing: 2 }}>{inbox}</b>
+            </p>
+          )}
         </form>
       )}
       {error && <p className="bad small" style={{ margin: "8px 0 0" }}>{error}</p>}

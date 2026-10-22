@@ -51,6 +51,7 @@ A watermark is only as good as the identity in it.
 
 ## Honest limits
 
+- During the hackathon the Tide network failed account creation, so the demo runs on a **simulated TideCloak**: the same sign-in steps, token claims and server-side checks, with a local signing key instead of Tide's threshold keys and no DPoP binding. `W2W_AUTH_MODE=tide` switches to the real realm.
 - Screenshots and phone photos can't be stopped; the aim is traceable copies, not impossible ones.
 - The hidden mark doesn't survive heavy resizing, filters or a phone photo, and the visible mark can be painted out.
 - Marks are added in the browser, so someone using developer tools could pull the unmarked image. Marking on the server is the next step.
@@ -59,13 +60,13 @@ A watermark is only as good as the identity in it.
 
 ## Setup
 
-**Guest mode** (no TideCloak; gallery and watermarks work, sign-in is off):
+**Quick start** (simulated TideCloak; every flow works, no Docker needed). Sign in with the demo accounts on the simulated TideCloak page:
 
 ```bash
 cd app && npm install && npm run dev   # http://localhost:3000
 ```
 
-**Full setup** (Tide sign-in, studio, leak checker). Needs Docker Desktop, Node.js 20+, `curl`, `jq`.
+**Real TideCloak** (`W2W_AUTH_MODE=tide` in `app/.env`). Needs Docker Desktop, Node.js 20+, `curl`, `jq`. See [docs/TIDECLOAK_PLAN.md](docs/TIDECLOAK_PLAN.md) for where TideCloak fits.
 
 ```bash
 cd app
