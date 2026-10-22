@@ -10,44 +10,44 @@ Built with [TideCloak](https://tide.org/tidecloak?utm_source=github&utm_medium=r
 
 ### The insight
 
-Artists need to be seen, but anything seen can be screenshotted. Hiding work only hurts the artist. W2W accepts that copies will be made and changes what a copy is: **every copy carries the name of the person it was shown to**, so it is never anonymous and never loses the artist's attribution.
+Anything seen can be screenshotted, so W2W changes what a copy is: **every copy carries the name of the person it was shown to**.
 
 ### 1. Vision & originality: a different watermark for every viewer
 
-Each visit gets its own watermark, in two layers:
+Each visit gets its own watermark:
 
-- **Visible:** faint diagonal text across the whole image, `W2W · <viewer> · <date>`. Survives phone photos and resizing.
-- **Hidden:** a server-issued view code written into the pixels as tiny brightness changes, repeated across the image. Survives screenshots, crops and light compression.
+- **Visible:** faint diagonal text, `W2W · <viewer> · <date>`; survives phone photos.
+- **Hidden:** a server-issued view code in the pixels; survives screenshots and crops.
 
-The art is drawn on a canvas (no image file to save), and a side panel tells the viewer **"This copy is marked for you"** with their label and code. Even an unlocked original is drawn with the collector's own mark.
+Art is drawn on a canvas with no file to save; unlocked originals are marked too.
 
 ### 2. Trust constraint insight
 
-Artists today choose between posting openly and being copied without a trace, or hiding their work. A watermark only helps if the name in it can be trusted and the artist, not the platform, controls the original. W2W gives the artist:
+Artists either post openly and get copied untraced, or hide their work. W2W gives them:
 
-- **Control:** visitors get a marked display copy; only the artist can approve, reject or revoke access to the original.
-- **Evidence:** every view is logged with its code, viewer and time.
-- **A response:** the studio's leak checker reads the hidden mark from a suspected copy and shows who it was shown to and when.
+- **Control:** only the artist can approve, reject or revoke access to originals.
+- **Evidence:** every view is logged with code, viewer and time.
+- **A response:** the leak checker reads a copy's hidden mark and names who saw it.
 
 ### 3. Value & impact
 
-An illustrator in Saigon can show her full portfolio worldwide instead of blurred previews. Anyone who screenshots it sees their own name on it first. If a copy turns up on a print shop, she drops it into the leak checker, finds the view it came from, revokes that access and has a specific record to back a takedown.
+An illustrator in Saigon shows her full portfolio, not blurred previews. When a copy turns up at a print shop, she finds its view, revokes access and has a takedown record.
 
 ### 4. Why TideCloak matters
 
-A per-viewer watermark is only as good as the identity written into it.
+A watermark is only as good as the identity in it.
 
-- **Verified names:** for signed-in viewers, the name in the mark comes from a Tide token verified on the server, not from anything the viewer types.
-- **No token replay:** tokens are DPoP-bound, and every protected route checks the proof came from the same browser key, so a stolen token is refused.
-- **Ownership by identity:** uploading makes your Tide identity the owner. Only that identity can approve originals or trace leaks.
-- **No passwords stored:** sign-in goes through TideCloak.
+- **Verified names:** a signed-in viewer's mark comes from a server-verified Tide token.
+- **No token replay:** DPoP-bound tokens are checked on every protected route.
+- **Ownership by identity:** only the uploader's Tide identity approves originals or traces leaks.
+- **No passwords stored.**
 
-### 5. In the demo (`demo.mp4`)
+### 5. Prototype & storytelling: the demo (`demo.mp4`)
 
-1. Browse Explore: art is open to everyone.
-2. Open an artwork: your name is across it and your hidden code is shown beside it.
-3. Request the original, approve it in the artist's studio, unlock it still marked.
-4. Crop a screenshot, drop it into the leak checker, and see it name the viewer.
+1. Explore: art is open to everyone.
+2. Open an artwork: your name is across it.
+3. Request the original, approve it in the studio, unlock it still marked.
+4. Drop a cropped screenshot into the leak checker; it names the viewer.
 
 ## Honest limits
 
