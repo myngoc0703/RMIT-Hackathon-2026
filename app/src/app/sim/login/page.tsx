@@ -8,8 +8,8 @@ import { setSimToken } from "@/lib/auth/client";
 type Step = { kind: "form" } | { kind: "passkey"; ticket: string; registered: boolean; username: string };
 
 const DEMO = [
-  { username: "linh.artist", password: "w2w-demo-2026", label: "Linh (artist)" },
-  { username: "ana.collector", password: "w2w-demo-2026", label: "Ana (collector)" },
+  { username: "artist", password: "w2w-demo-2026", label: "Artist" },
+  { username: "collector", password: "w2w-demo-2026", label: "Collector" },
 ];
 
 export default function SimLoginPage() {
@@ -83,7 +83,7 @@ export default function SimLoginPage() {
             <form onSubmit={submit} className="tide-form">
               <label>
                 <span>Username</span>
-                <input id="sim-username" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="linh.artist" />
+                <input id="sim-username" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="your-username" />
               </label>
               <label>
                 <span>Password</span>

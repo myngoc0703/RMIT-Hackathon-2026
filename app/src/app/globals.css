@@ -210,3 +210,13 @@ code { font-family: var(--mono); font-size: 0.9em; background: var(--yellow); pa
 .tide-foot b { color: #2563eb; font-size: 16px; }
 .tide-foot span { font-size: 11px; }
 .sim-chip { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--ink); background: var(--yellow); border: 1.5px solid var(--ink); border-radius: 3px; padding: 1px 6px; white-space: nowrap; }
+
+/* Signed-in profile chip */
+.user-chip { display: inline-flex; align-items: center; gap: 8px; padding: 3px 12px 3px 3px; border: 2px solid var(--ink); border-radius: 999px; background: var(--panel); transition: transform 0.12s, box-shadow 0.12s; max-width: 200px; }
+.user-chip:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--pink); }
+.user-avatar { width: 28px; height: 28px; flex: none; border-radius: 50%; background: var(--pink); color: var(--bg); border: 2px solid var(--ink); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+.user-name { font-weight: 700; font-size: 14px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.signout { background: none; border: 0; padding: 4px 2px; font: 600 13px var(--display); color: var(--muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.signout:hover { color: var(--bad); }
+
+.nav { flex-wrap: wrap; row-gap: 10px; }

@@ -13,12 +13,14 @@ export default function Nav() {
       <span className="spacer" />
       {simulated && <span className="sim-chip" title="Sign-in, roles and access checks are simulated until TideCloak is connected">Simulated TideCloak</span>}
       <a href="/studio#upload" className="pill">＋ Upload your art</a>
-      {!isInitializing && authenticated && <a href="/me" className="pill">My profile</a>}
       {!isInitializing && authenticated && <a href="/studio" className="pill">My studio</a>}
       {!isInitializing && authenticated ? (
         <>
-          <span className="muted small">{String(getValueFromIdToken("preferred_username") ?? "")}</span>
-          <button className="pill" onClick={logout}>Sign out</button>
+          <a href="/me" className="user-chip" title="My profile">
+            <span className="user-avatar" aria-hidden>{String(getValueFromIdToken("preferred_username") ?? "?").charAt(0).toUpperCase()}</span>
+            <span className="user-name">{String(getValueFromIdToken("preferred_username") ?? "")}</span>
+          </a>
+          <button className="signout" onClick={logout}>Sign out</button>
         </>
       ) : (
         guest ? (
