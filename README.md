@@ -62,5 +62,4 @@ npm run dev      # http://localhost:3000
   - `src/app/studio`: artist studio with request approvals and the leak checker
   - `src/lib/watermark.ts`: invisible watermark embed and decode
   - `src/app/api/*`: public gallery routes, and Tide-protected request and leak routes
-- `challenge1/`: our Challenge 1 Kaggle notebook (multilingual prompt-attack classifier)
 - `demo.mp4`: two-minute demo video
