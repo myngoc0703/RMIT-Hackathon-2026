@@ -16,6 +16,7 @@ export type Artwork = {
   ratio: number; // height / width
   baseViews: number;
   licence: boolean;
+  image?: string; // uploaded works: the low-resolution display copy (data URL)
 };
 
 export type Artist = {

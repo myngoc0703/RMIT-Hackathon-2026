@@ -20,7 +20,7 @@ An illustrator in Saigon can show her portfolio worldwide. When a copy appears o
 
 ### 4. Why TideCloak matters
 
-Every request carries a DPoP-bound Tide token checked on the server. Studio powers need the `artist` role, and on this IGA-enabled realm granting it is a change request admins approve in the Tide enclave, so neither the platform nor one admin can make someone an artist. Licence approvals come only from that role.
+Every request carries a DPoP-bound Tide token checked on the server. There is no admin role: whoever uploads a work with their Tide identity owns it, and only that identity can approve, reject or revoke access to its original, so neither the platform nor any operator can hand it out.
 
 ### 5. Prototype & storytelling
 
@@ -72,7 +72,8 @@ npm run dev      # http://localhost:3000
 - `app/`: the WaveToWin Next.js app (from Tide's `nextjs-customer-portal` template)
   - `src/app/page.tsx`: Explore, with search, categories and the most-viewed board
   - `src/app/art/[id]`: artwork view; each visit gets its own watermark code
-  - `src/app/studio`: artist studio with request approvals and the leak checker
+  - `src/app/studio`: every member's studio: upload, approvals for their own works, and the leak checker
+  - `src/app/access`: the access-rights page (visitor, member, licensed collector, artist)
   - `src/lib/watermark.ts`: invisible watermark embed and decode
   - `src/app/api/*`: public gallery routes, and Tide-protected request and leak routes
 - `demo.mp4`: two-minute demo video

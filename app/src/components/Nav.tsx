@@ -1,17 +1,17 @@
 "use client";
 
 import { useAuth } from "@/lib/auth/client";
-import { ARTIST_ROLE } from "@/lib/roles";
 
 export default function Nav() {
-  const { guest, authenticated, isInitializing, login, logout, getValueFromIdToken, hasRealmRole } = useAuth();
+  const { guest, authenticated, isInitializing, login, logout, getValueFromIdToken } = useAuth();
   return (
     <header className="nav">
       <a href="/" className="brand serif">WaveToWin</a>
       <a href="/" className="navlink">Explore</a>
       <a href="/#artists" className="navlink">Artists</a>
+      <a href="/access" className="navlink">Access rights</a>
       <span className="spacer" />
-      {!isInitializing && authenticated && hasRealmRole(ARTIST_ROLE) && <a href="/studio" className="pill">Studio</a>}
+      {!isInitializing && authenticated && <a href="/studio" className="pill">My studio</a>}
       {!isInitializing && authenticated ? (
         <>
           <span className="muted small">{String(getValueFromIdToken("preferred_username") ?? "")}</span>

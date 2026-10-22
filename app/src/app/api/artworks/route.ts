@@ -1,10 +1,9 @@
-import { ARTWORKS, ARTISTS } from "@/lib/gallery";
-import { viewCount } from "@/lib/store";
+import { allArtists, allArtworks, viewCount } from "@/lib/store";
 
-// Public: the gallery is open to everyone. Only display data is served; there is no original file here.
+// Public: the gallery is open to everyone. Only display data is served: no owners, no originals.
 export async function GET() {
   return Response.json({
-    artists: ARTISTS,
-    artworks: ARTWORKS.map((a) => ({ ...a, views: viewCount(a.id) })),
+    artists: allArtists(),
+    artworks: allArtworks().map((a) => ({ ...a, views: viewCount(a.id) })),
   });
 }

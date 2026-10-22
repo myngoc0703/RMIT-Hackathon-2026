@@ -1,19 +1,26 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import Nav from "@/components/Nav";
 import ArtCanvas from "@/components/ArtCanvas";
-import { ARTWORKS, artistById } from "@/lib/gallery";
+import type { Artist, Artwork } from "@/lib/gallery";
 
 // An artist's own page. Wall colour and layout are the artist's choices, and the cover takes its
 // colours from their first artwork, so every page looks different.
 export default function ArtistPage() {
   const { id } = useParams<{ id: string }>();
-  const artist = artistById(id);
-  const works = ARTWORKS.filter((a) => a.artistId === id);
+  const [data, setData] = useState<{ artists: Artist[]; artworks: Artwork[] } | null>(null);
+  useEffect(() => {
+    fetch("/api/artworks").then((r) => r.json()).then(setData);
+  }, []);
+  if (!data) return <main className="page"><Nav /><p className="muted">Loading…</p></main>;
+  const artist = data.artists.find((a) => a.id === id);
+  const works = data.artworks.filter((a) => a.artistId === id);
   if (!artist) return <main className="page"><Nav /><p className="muted">This artist doesn't exist.</p></main>;
 
   const palette = works.flatMap((w) => [w.bg, ...w.shapes.map((s) => s.c)]).slice(0, 4);
+  if (palette.length < 2) palette.push("#ff4f7b", "#ffd23f");
   // Riso-style cover: hard colour bands from the artist's own palette.
   const cover = `linear-gradient(100deg, ${palette.map((c, i) => `${c} ${(i * 100) / palette.length}% ${((i + 1) * 100) / palette.length}%`).join(", ")})`;
 

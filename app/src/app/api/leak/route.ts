@@ -1,13 +1,12 @@
 import { NextRequest } from "next/server";
-import { withVerifiedRole } from "@/lib/auth/protect";
-import { ARTIST_ROLE } from "@/lib/roles";
-import { findView } from "@/lib/store";
-import { artworkById } from "@/lib/gallery";
+import { withVerified } from "@/lib/auth/protect";
+import { findArtwork, findView, isOwner } from "@/lib/store";
 
-// Artists only: look up who was shown the copy carrying a decoded watermark code.
-export const GET = withVerifiedRole(ARTIST_ROLE, async (req: NextRequest) => {
+// Artists can trace leaks of their own artworks only.
+export const GET = withVerified(async (req: NextRequest, jwt) => {
   const code = Number(req.nextUrl.searchParams.get("code"));
   const view = Number.isFinite(code) ? findView(code) : undefined;
   if (!view) return Response.json({ error: "No view with that mark" }, { status: 404 });
-  return Response.json({ view, artwork: artworkById(view.artworkId)?.title });
+  if (!isOwner(view.artworkId, String(jwt.sub))) return Response.json({ error: "That copy is of an artwork you don't own." }, { status: 403 });
+  return Response.json({ view, artwork: findArtwork(view.artworkId)?.title });
 });
