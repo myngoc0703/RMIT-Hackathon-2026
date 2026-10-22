@@ -24,7 +24,7 @@ export default function Nav() {
           <button className="pill" onClick={login} title="TideCloak isn't set up on this computer">Guest mode · sign-in off</button>
         ) : (
           <>
-            <a href="/join" className="pill">Join W2W</a>
+            <button className="pill" onClick={login} disabled={isInitializing} title="Opens Tide: choose “New user? Create an account”">Sign up</button>
             <button className="pill solid" onClick={login} disabled={isInitializing}>Sign in with Tide</button>
           </>
         )
