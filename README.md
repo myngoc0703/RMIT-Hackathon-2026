@@ -44,6 +44,8 @@ A watermark is only as good as the identity in it.
 
 ### 5. Prototype & storytelling: the demo (`demo.mp4`)
 
+Demo files: [Google Drive folder](https://drive.google.com/drive/folders/19uy5bbEwfligiNb8SKVUz0DGCksPYPut?usp=drive_link)
+
 1. Explore: art is open to everyone.
 2. Open an artwork: your name is across it.
 3. Request the original, approve it in the studio, unlock it still marked.
