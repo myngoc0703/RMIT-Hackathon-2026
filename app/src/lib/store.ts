@@ -58,7 +58,7 @@ export function addUpload(
 ): Artwork {
   const artistId = artistIdFor(sub);
   if (!s.uploadArtists.some((a) => a.id === artistId)) {
-    s.uploadArtists.unshift({ id: artistId, name: username, city: "WaveToWin member", bio: "Uploads sealed by their own Tide identity.", wall: "paper", layout: "grid" });
+    s.uploadArtists.unshift({ id: artistId, name: username, city: "W2W member", bio: "Uploads sealed by their own Tide identity.", wall: "paper", layout: "grid" });
   }
   const slug = input.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "artwork";
   const id = `${slug}-${Date.now().toString(36)}`;
@@ -101,4 +101,50 @@ export function setRequestStatus(id: string, status: LicenceRequest["status"]) {
   const r = s.requests.find((x) => x.id === id);
   if (r) r.status = status;
   return r;
+}
+
+// Social: who follows whom, and counters for accomplishments. Keyed by Tide `sub`.
+type Social = { follows: Record<string, string[]>; names: Record<string, string>; leaksTraced: Record<string, number> };
+const gs = globalThis as unknown as { __w2wSocial?: Social };
+const social: Social = (gs.__w2wSocial ??= { follows: {}, names: {}, leaksTraced: {} });
+
+export const rememberName = (sub: string, name: string) => { social.names[sub] = name; };
+export const following = (sub: string) => social.follows[sub] ?? [];
+
+export function setFollow(sub: string, artistId: string, on: boolean) {
+  const list = new Set(following(sub));
+  if (on) list.add(artistId); else list.delete(artistId);
+  social.follows[sub] = [...list];
+  return social.follows[sub];
+}
+
+// Members following this artist (real follows only; seeded artists also show a synthetic count).
+export const followersOf = (artistId: string) =>
+  Object.entries(social.follows).filter(([, ids]) => ids.includes(artistId)).map(([sub]) => social.names[sub] ?? "member");
+
+export const countLeakTraced = (sub: string) => { social.leaksTraced[sub] = (social.leaksTraced[sub] ?? 0) + 1; };
+
+export function profileOf(sub: string) {
+  const works = ownedBy(sub);
+  const views = works.reduce((n, a) => n + viewCount(a.id), 0);
+  const approvedForMe = requests().filter((r) => r.requesterSub === sub && r.status === "approved").length;
+  const approvedByMe = requests().filter((r) => isOwner(r.artworkId, sub) && r.status === "approved").length;
+  const followers = followersOf(artistIdFor(sub));
+  const traced = social.leaksTraced[sub] ?? 0;
+  const badges = [
+    { id: "first-upload", label: "First upload", hint: "Upload one artwork", earned: works.length >= 1 },
+    { id: "gallery-five", label: "Gallery of five", hint: "Upload five artworks", earned: works.length >= 5 },
+    { id: "hundred-views", label: "100 marked views", hint: "Get 100 views on your work", earned: views >= 100 },
+    { id: "first-collector", label: "First collector", hint: "Approve someone's request", earned: approvedByMe >= 1 },
+    { id: "collector", label: "Collector", hint: "Get an original approved for you", earned: approvedForMe >= 1 },
+    { id: "rising", label: "Rising artist", hint: "Reach three followers", earned: followers.length >= 3 },
+    { id: "leak-hunter", label: "Leak hunter", hint: "Trace a leaked copy", earned: traced >= 1 },
+  ];
+  return {
+    artistId: artistIdFor(sub),
+    stats: { works: works.length, views, approvedByMe, approvedForMe, followers: followers.length, following: following(sub).length, traced },
+    badges,
+    followers,
+    following: following(sub).map((id) => allArtists().find((a) => a.id === id)).filter(Boolean),
+  };
 }

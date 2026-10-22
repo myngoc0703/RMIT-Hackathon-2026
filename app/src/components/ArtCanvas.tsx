@@ -62,7 +62,7 @@ export default function ArtCanvas({ art, width, mark, className, src }: { art: A
         ctx.fillStyle = "#ffffff";
         ctx.font = `${Math.max(11, Math.round(w / 55))}px system-ui, sans-serif`;
         ctx.rotate(-Math.PI / 8);
-        const text = `WaveToWin · ${mark.label} · ${new Date().toLocaleDateString()}`;
+        const text = `W2W · ${mark.label} · ${new Date().toLocaleDateString()}`;
         const step = ctx.measureText(text).width + 60;
         for (let y = -h; y < h * 2; y += Math.max(70, w / 9)) {
           for (let x = -w; x < w * 2; x += step) ctx.fillText(text, x, y);

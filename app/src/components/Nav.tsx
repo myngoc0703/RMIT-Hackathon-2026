@@ -6,11 +6,13 @@ export default function Nav() {
   const { guest, authenticated, isInitializing, login, logout, getValueFromIdToken } = useAuth();
   return (
     <header className="nav">
-      <a href="/" className="brand serif">WaveToWin</a>
+      <a href="/" className="brand serif">W2W</a>
       <a href="/" className="navlink">Explore</a>
       <a href="/#artists" className="navlink">Artists</a>
       <a href="/access" className="navlink">Access rights</a>
       <span className="spacer" />
+      <a href="/studio#upload" className="pill">＋ Upload your art</a>
+      {!isInitializing && authenticated && <a href="/me" className="pill">My profile</a>}
       {!isInitializing && authenticated && <a href="/studio" className="pill">My studio</a>}
       {!isInitializing && authenticated ? (
         <>
@@ -21,7 +23,10 @@ export default function Nav() {
         guest ? (
           <button className="pill" onClick={login} title="TideCloak isn't set up on this computer">Guest mode · sign-in off</button>
         ) : (
-          <button className="pill solid" onClick={login} disabled={isInitializing}>Sign in with Tide</button>
+          <>
+            <a href="/join" className="pill">Join W2W</a>
+            <button className="pill solid" onClick={login} disabled={isInitializing}>Sign in with Tide</button>
+          </>
         )
       )}
     </header>

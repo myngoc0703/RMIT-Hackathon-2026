@@ -2,7 +2,7 @@
 
 ## Project overview
 
-_WaveToWin is an open art gallery where anyone can view an artist's work, but every view is traceable and the original stays in the artist's hands._
+_W2W is an open art gallery where anyone can view an artist's work, but every view is traceable and the original stays in the artist's hands._
 
 Built with [TideCloak](https://tide.org/tidecloak?utm_source=github&utm_medium=readme&utm_campaign=unlocked).
 
@@ -12,7 +12,7 @@ A gallery that doesn't hide art to protect it. Every visitor sees the work, draw
 
 ### 2. Trust constraint insight
 
-Today artists must choose: post publicly and get copied, scraped or resold, or hide their work. Platforms hold every original, and whoever runs the backend can hand it out. WaveToWin removes both: copies are traceable, and authority over originals sits with the artist.
+Today artists must choose: post publicly and get copied, scraped or resold, or hide their work. Platforms hold every original, and whoever runs the backend can hand it out. W2W removes both: copies are traceable, and authority over originals sits with the artist.
 
 ### 3. Value & impact
 
@@ -63,13 +63,13 @@ npm run dev      # http://localhost:3000
 
 ## Honest limits
 
-- No website can stop a screenshot or a phone photo of the screen. WaveToWin makes copies traceable instead: the hidden mark survives screenshots, crops and light compression, and the visible mark covers phone photos and resizing.
+- No website can stop a screenshot or a phone photo of the screen. W2W makes copies traceable instead: the hidden mark survives screenshots, crops and light compression, and the visible mark covers phone photos and resizing.
 - TideCloak 26.7 has no built-in email-code step, so the Gmail code is enforced by our server rather than inside TideCloak.
 - The view log, requests and email verifications are kept in memory for the demo; all art and people are synthetic.
 
 ## Repository layout
 
-- `app/`: the WaveToWin Next.js app (from Tide's `nextjs-customer-portal` template)
+- `app/`: the W2W Next.js app (from Tide's `nextjs-customer-portal` template)
   - `src/app/page.tsx`: Explore, with search, categories and the most-viewed board
   - `src/app/art/[id]`: artwork view; each visit gets its own watermark code
   - `src/app/studio`: every member's studio: upload, approvals for their own works, and the leak checker

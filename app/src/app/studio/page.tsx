@@ -28,7 +28,7 @@ async function makeDisplayCopy(file: File, artist: string) {
   ctx.globalAlpha = 0.18;
   ctx.fillStyle = "#ffffff";
   ctx.font = `${Math.max(12, Math.round(c.width / 40))}px system-ui, sans-serif`;
-  ctx.fillText(`© ${artist} · WaveToWin`, 14, c.height - 14);
+  ctx.fillText(`© ${artist} · W2W`, 14, c.height - 14);
   return { display: c.toDataURL("image/jpeg", 0.82), ratio: bmp.height / bmp.width };
 }
 
@@ -130,7 +130,7 @@ export default function StudioPage() {
       <EmailGate>
         <div className="view">
           <div className="side">
-            <section className="box">
+            <section className="box" id="upload">
               <h2>Upload your artwork</h2>
               <p className="muted small" style={{ marginTop: 0 }}>You become its owner. Only you can approve who gets the original.</p>
               <form onSubmit={submitUpload} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -210,7 +210,7 @@ export default function StudioPage() {
                 <input type="file" accept="image/*" hidden onChange={(e) => e.target.files?.[0] && check(e.target.files[0])} />
                 {leak.state === "reading" ? "Reading the hidden mark…" : "Choose an image"}
               </label>
-              {leak.state === "none" && <p className="bad small">No WaveToWin mark found. The copy may be resized or photographed; check the visible mark instead.</p>}
+              {leak.state === "none" && <p className="bad small">No W2W mark found. The copy may be resized or photographed; check the visible mark instead.</p>}
               {leak.state === "unknown" && <p className="small">Mark {leak.code} found, but there&apos;s no matching view on record.</p>}
               {leak.state === "denied" && <p className="bad small">{leak.msg}</p>}
               {leak.state === "found" && leak.found && (

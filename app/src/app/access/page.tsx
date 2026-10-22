@@ -31,7 +31,7 @@ const ROWS = [
   },
 ];
 
-export const metadata = { title: "Access rights · WaveToWin" };
+export const metadata = { title: "Access rights · W2W" };
 
 export default function AccessPage() {
   return (
@@ -56,7 +56,7 @@ export default function AccessPage() {
         ))}
       </section>
       <p className="muted small" style={{ marginTop: 26 }}>
-        TideCloak has a technical operator for running the server, but it isn&apos;t a role in WaveToWin and can&apos;t approve access to anyone&apos;s art.
+        TideCloak has a technical operator for running the server, but it isn&apos;t a role in W2W and can&apos;t approve access to anyone&apos;s art.
       </p>
     </main>
   );

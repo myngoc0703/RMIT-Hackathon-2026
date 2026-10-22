@@ -21,10 +21,10 @@ export async function startVerification(sub: string, email: string) {
     auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
   });
   await transport.sendMail({
-    from: `WaveToWin <${process.env.GMAIL_USER}>`,
+    from: `W2W <${process.env.GMAIL_USER}>`,
     to: email,
-    subject: `Your WaveToWin code: ${code}`,
-    text: `Your WaveToWin verification code is ${code}. It expires in 10 minutes.\nIf you didn't try to sign in, ignore this email.`,
+    subject: `Your W2W code: ${code}`,
+    text: `Your W2W verification code is ${code}. It expires in 10 minutes.\nIf you didn't try to sign in, ignore this email.`,
   });
 }
 

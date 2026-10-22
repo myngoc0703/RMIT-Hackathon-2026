@@ -73,6 +73,7 @@ export default function ExplorePage() {
         <div style={{ flex: 1 }}>
           <h1 className="serif">Show your art to everyone. Let no one steal it.</h1>
           <p>Every view carries the viewer&apos;s mark. Every original stays with the artist.</p>
+          <a href="/studio#upload" className="pill solid" style={{ display: "inline-block", marginTop: 14, background: "var(--yellow)", color: "var(--ink)", borderColor: "var(--ink)" }}>＋ Upload your artwork</a>
           <div className="stats">
             <span><b>{artists.length}</b> artists</span>
             <span><b>{art.length}</b> works</span>
@@ -213,7 +214,7 @@ export default function ExplorePage() {
 
       <footer className="footer-full">
         <div>
-          <span className="serif" style={{ fontSize: 20, color: "var(--text)" }}>WaveToWin</span>
+          <span className="serif" style={{ fontSize: 20, color: "var(--text)" }}>W2W</span>
           <p className="muted small" style={{ margin: "6px 0 0", maxWidth: 260 }}>An open gallery where every view is traceable and every original stays with its artist.</p>
         </div>
         <div><b>Explore</b><a href="/">Most viewed</a><a href="/#artists">Artists</a></div>

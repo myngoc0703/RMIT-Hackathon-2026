@@ -5,15 +5,35 @@ import { useEffect, useState } from "react";
 import Nav from "@/components/Nav";
 import ArtCanvas from "@/components/ArtCanvas";
 import type { Artist, Artwork } from "@/lib/gallery";
+import { useAuth } from "@/lib/auth/client";
+import { useApi } from "@/lib/useApi";
 
 // An artist's own page. Wall colour and layout are the artist's choices, and the cover takes its
 // colours from their first artwork, so every page looks different.
 export default function ArtistPage() {
   const { id } = useParams<{ id: string }>();
-  const [data, setData] = useState<{ artists: Artist[]; artworks: Artwork[] } | null>(null);
+  const [data, setData] = useState<{ artists: (Artist & { followers?: number })[]; artworks: Artwork[] } | null>(null);
+  const { authenticated, guest, login } = useAuth();
+  const api = useApi();
+  const [me, setMe] = useState<{ artistId: string; following: Artist[] } | null>(null);
+  const [followMsg, setFollowMsg] = useState<string | null>(null);
+  const loadGallery = () => fetch("/api/artworks").then((r) => r.json()).then(setData);
   useEffect(() => {
-    fetch("/api/artworks").then((r) => r.json()).then(setData);
+    loadGallery();
   }, []);
+  useEffect(() => {
+    if (authenticated) api("/api/me").then((r) => (r.ok ? r.json() : null)).then(setMe);
+  }, [authenticated, api]);
+
+  async function toggleFollow(on: boolean) {
+    setFollowMsg(null);
+    if (!authenticated) return guest ? setFollowMsg("Sign-in is off on this computer.") : login();
+    const res = await api("/api/follow", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ artistId: id, follow: on }) });
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) return setFollowMsg(d.needsEmail ? "Verify your email in My studio first." : d.error ?? "Couldn't update. Try again.");
+    api("/api/me").then((r) => (r.ok ? r.json() : null)).then(setMe);
+    loadGallery();
+  }
   if (!data) return <main className="page"><Nav /><p className="muted">Loading…</p></main>;
   const artist = data.artists.find((a) => a.id === id);
   const works = data.artworks.filter((a) => a.artistId === id);
@@ -35,7 +55,17 @@ export default function ArtistPage() {
             <h1 className="serif" style={{ fontSize: 28, margin: 0 }}>{artist.name}</h1>
             <p className="muted" style={{ margin: 0 }}>{artist.city} · {artist.bio}</p>
           </div>
-          <span className="pill">Follow</span>
+          <span style={{ textAlign: "right" }}>
+            <span className="meta" style={{ display: "block", marginBottom: 6 }}>{artist.followers ?? 0} followers</span>
+            {me?.artistId === artist.id ? (
+              <a className="pill" href="/me">This is you</a>
+            ) : me?.following.some((a) => a.id === artist.id) ? (
+              <button className="pill solid" onClick={() => toggleFollow(false)}>Following ✓</button>
+            ) : (
+              <button className="pill" onClick={() => toggleFollow(true)}>＋ Follow</button>
+            )}
+            {followMsg && <span className="bad small" style={{ display: "block", marginTop: 6 }}>{followMsg}</span>}
+          </span>
         </div>
 
         {artist.layout === "spotlight" && works[0] && (
