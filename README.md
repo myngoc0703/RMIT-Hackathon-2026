@@ -1,79 +1,82 @@
 [![Built with TideCloak](https://tide.org/badges/built-with-tidecloak.svg)](https://tide.org/tidecloak?utm_source=github&utm_medium=readme&utm_campaign=unlocked)
 
-## Project overview
+# W2W
 
-_WaveToWin is an open art gallery where anyone can view an artist's work, but every view is traceable and the original stays in the artist's hands._
+_An open art gallery where every view is watermarked with the name of the person looking._
 
 Built with [TideCloak](https://tide.org/tidecloak?utm_source=github&utm_medium=readme&utm_campaign=unlocked).
 
-### 1. Vision & originality
+## Project overview
 
-A gallery that doesn't hide art to protect it. Every visitor sees the work, drawn on a canvas with no file to save and marked with that visitor's own visible and invisible watermark. Only the artist decides who gets the full original.
+### The insight
+
+Artists need to be seen, but anything seen can be screenshotted. Hiding work only hurts the artist. WaveToWin accepts that copies will be made and changes what a copy is: **every copy carries the name of the person it was shown to**, so it is never anonymous and never loses the artist's attribution.
+
+### 1. Vision & originality: a different watermark for every viewer
+
+Each visit gets its own watermark, in two layers:
+
+- **Visible:** faint diagonal text across the whole image, `WaveToWin · <viewer> · <date>`. Survives phone photos and resizing.
+- **Hidden:** a server-issued view code written into the pixels as tiny brightness changes, repeated across the image. Survives screenshots, crops and light compression.
+
+The art is drawn on a canvas (no image file to save), and a side panel tells the viewer **"This copy is marked for you"** with their label and code. Even an unlocked original is drawn with the collector's own mark.
 
 ### 2. Trust constraint insight
 
-Today artists must choose: post publicly and get copied, scraped or resold, or hide their work. Platforms hold every original, and whoever runs the backend can hand it out. WaveToWin removes both: copies are traceable, and authority over originals sits with the artist.
+Artists today choose between posting openly and being copied without a trace, or hiding their work. A watermark only helps if the name in it can be trusted and the artist, not the platform, controls the original. WaveToWin gives the artist:
+
+- **Control:** visitors get a marked display copy; only the artist can approve, reject or revoke access to the original.
+- **Evidence:** every view is logged with its code, viewer and time.
+- **A response:** the studio's leak checker reads the hidden mark from a suspected copy and shows who it was shown to and when.
 
 ### 3. Value & impact
 
-An illustrator in Saigon can show her portfolio worldwide. When a copy appears online, she drops it into the leak checker and sees exactly which view it came from, even after cropping or compression.
+An illustrator in Saigon can show her full portfolio worldwide instead of blurred previews. Anyone who screenshots it sees their own name on it first. If a copy turns up on a print shop, she drops it into the leak checker, finds the view it came from, revokes that access and has a specific record to back a takedown.
 
 ### 4. Why TideCloak matters
 
-Every request carries a DPoP-bound Tide token checked on the server. There is no admin role: whoever uploads a work with their Tide identity owns it, and only that identity can approve, reject or revoke access to its original, so neither the platform nor any operator can hand it out.
+A per-viewer watermark is only as good as the identity written into it.
 
-### 5. Prototype & storytelling
+- **Verified names:** for signed-in viewers, the name in the mark comes from a Tide token verified on the server, not from anything the viewer types.
+- **No token replay:** tokens are DPoP-bound, and every protected route checks the proof came from the same browser key, so a stolen token is refused.
+- **Ownership by identity:** uploading makes your Tide identity the owner. Only that identity can approve originals or trace leaks.
+- **No passwords stored:** sign-in goes through TideCloak.
 
-Browse Explore and the most-viewed board, open an artwork and see your mark, request the original, approve it in the studio, then drop a screenshot into the leak checker to name the viewer.
+### 5. In the demo (`demo.mp4`)
+
+1. Browse Explore: art is open to everyone.
+2. Open an artwork: your name is across it and your hidden code is shown beside it.
+3. Request the original, approve it in the artist's studio, unlock it still marked.
+4. Crop a screenshot, drop it into the leak checker, and see it name the viewer.
+
+## Honest limits
+
+- Screenshots and phone photos can't be stopped; the aim is traceable copies, not impossible ones.
+- The hidden mark doesn't survive heavy resizing, filters or a phone photo, and the visible mark can be painted out.
+- Marks are added in the browser, so someone using developer tools could pull the unmarked image. Marking on the server is the next step.
+- A trace names the view a copy came from, not necessarily who posted it. Signed-out visitors are only a number.
+- Views, requests and email codes are kept in memory for the demo; all art and people are synthetic.
 
 ## Setup
 
-### Quick start (guest mode, no TideCloak)
+**Guest mode** (no TideCloak; gallery and watermarks work, sign-in is off):
 
 ```bash
-cd app
-npm install
-npm run dev      # http://localhost:3000
+cd app && npm install && npm run dev   # http://localhost:3000
 ```
 
-Without `app/data/tidecloak.json` the site runs in guest mode: the gallery, leaderboard, per-viewer watermarks
-and artist pages all work, and sign-in is turned off. Protected routes still refuse every request.
-
-### Full setup (Tide sign-in, passkey, studio)
-
-Requirements: Docker Desktop (running), Node.js 20+, `curl`, `jq`.
+**Full setup** (Tide sign-in, studio, leak checker). Needs Docker Desktop, Node.js 20+, `curl`, `jq`.
 
 ```bash
 cd app
 npm install
 cp .env.example .env
-# In .env set: KC_BOOTSTRAP_ADMIN_PASSWORD (your choice), TIDE_LICENSE_EMAIL (your email),
-# and TIDE_TERMS_ACCEPTED=yes only if you agree to https://tide.org/legal
-# For the email-code layer also set GMAIL_USER and GMAIL_APP_PASSWORD (a Gmail app password)
-npm run init     # starts TideCloak on :8080, creates and licenses the realm, prints an invite link
-# open the invite link and complete Tide enrolment; init finishes on its own
-npm run dev      # http://localhost:3000
+# Set KC_BOOTSTRAP_ADMIN_PASSWORD, TIDE_LICENSE_EMAIL, and TIDE_TERMS_ACCEPTED=yes if you agree to https://tide.org/legal
+# For the email-code step also set GMAIL_USER and GMAIL_APP_PASSWORD
+npm run init   # starts TideCloak on :8080 and prints an invite link; complete Tide enrolment
+npm run dev
 ```
 
-## Sign-in layers
+Originals, the studio and the leak checker also need a 6-digit Gmail code, checked by our server (TideCloak 26.7 has no built-in email-code step).
 
-1. **Tide sign-in** (TideCloak broker): no password database on our side.
-2. **Passkey** (TideCloak post-login flow `wavetowin-passkey`): Touch ID or a security key, registered on first sign-in.
-3. **Gmail code** (our server, bound to the Tide token's `sub`): requesting originals, the studio and the leak checker are refused until a 6-digit code sent from Gmail is confirmed.
-
-## Honest limits
-
-- No website can stop a screenshot or a phone photo of the screen. WaveToWin makes copies traceable instead: the hidden mark survives screenshots, crops and light compression, and the visible mark covers phone photos and resizing.
-- TideCloak 26.7 has no built-in email-code step, so the Gmail code is enforced by our server rather than inside TideCloak.
-- The view log, requests and email verifications are kept in memory for the demo; all art and people are synthetic.
-
-## Repository layout
-
-- `app/`: the WaveToWin Next.js app (from Tide's `nextjs-customer-portal` template)
-  - `src/app/page.tsx`: Explore, with search, categories and the most-viewed board
-  - `src/app/art/[id]`: artwork view; each visit gets its own watermark code
-  - `src/app/studio`: every member's studio: upload, approvals for their own works, and the leak checker
-  - `src/app/access`: the access-rights page (visitor, member, licensed collector, artist)
-  - `src/lib/watermark.ts`: invisible watermark embed and decode
-  - `src/app/api/*`: public gallery routes, and Tide-protected request and leak routes
-- `demo.mp4`: two-minute demo video
+**Key files:** `app/src/lib/watermark.ts` (hidden mark), `app/src/components/ArtCanvas.tsx` (drawing both marks), `app/src/app/studio` (approvals and leak checker), `app/src/app/api` (protected routes).
