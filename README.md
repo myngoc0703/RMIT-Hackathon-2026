@@ -28,6 +28,19 @@ Browse Explore and the most-viewed board, open an artwork and see your mark, req
 
 ## Setup
 
+### Quick start (guest mode, no TideCloak)
+
+```bash
+cd app
+npm install
+npm run dev      # http://localhost:3000
+```
+
+Without `app/data/tidecloak.json` the site runs in guest mode: the gallery, leaderboard, per-viewer watermarks
+and artist pages all work, and sign-in is turned off. Protected routes still refuse every request.
+
+### Full setup (Tide sign-in, passkey, studio)
+
 Requirements: Docker Desktop (running), Node.js 20+, `curl`, `jq`.
 
 ```bash

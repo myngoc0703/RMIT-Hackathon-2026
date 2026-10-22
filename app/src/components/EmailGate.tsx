@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTideCloak } from "@tidecloak/nextjs";
+import { useAuth } from "@/lib/auth/client";
 import { useApi } from "@/lib/useApi";
 
 // Second sign-in layer. Renders children once the signed-in Tide identity has confirmed a Gmail code;
 // until then it shows the send-code / enter-code form. The server enforces the same check.
 export default function EmailGate({ children }: { children: React.ReactNode }) {
-  const { authenticated } = useTideCloak();
+  const { authenticated } = useAuth();
   const api = useApi();
   const [status, setStatus] = useState<{ verified: boolean; configured: boolean } | null>(null);
   const [email, setEmail] = useState("");

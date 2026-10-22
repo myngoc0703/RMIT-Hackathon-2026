@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useTideCloak } from "@tidecloak/nextjs";
+import { useAuth } from "@/lib/auth/client";
 import Nav from "@/components/Nav";
 import ArtCanvas from "@/components/ArtCanvas";
 import { artistById, artworkById } from "@/lib/gallery";
@@ -17,7 +17,7 @@ export default function ArtworkPage() {
   const { id } = useParams<{ id: string }>();
   const art = artworkById(id);
   const artist = art && artistById(art.artistId);
-  const { authenticated, isInitializing, login } = useTideCloak();
+  const { guest, authenticated, isInitializing, login } = useAuth();
   const api = useApi();
   const [mark, setMark] = useState<Mark | null>(null);
   const [request, setRequest] = useState<string | null>(null);
@@ -77,6 +77,8 @@ export default function ArtworkPage() {
             <h2>The original stays with {artist.name.split(" ")[0]}</h2>
             {!art.licence ? (
               <p className="muted small" style={{ margin: 0 }}>This artist doesn&apos;t offer the original or a licence for this work.</p>
+            ) : guest ? (
+              <p className="muted small" style={{ margin: 0 }}>Sign-in is off on this computer (guest mode), so requests are unavailable here.</p>
             ) : !authenticated ? (
               <>
                 <p className="muted small" style={{ margin: "0 0 10px" }}>Sign in to ask the artist for the full-quality original or a print licence.</p>

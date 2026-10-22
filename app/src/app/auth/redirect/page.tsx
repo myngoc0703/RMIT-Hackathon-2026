@@ -2,6 +2,7 @@
 
 import { useAuthCallback } from "@tidecloak/nextjs";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/auth/client";
 
 // Post-auth redirect handler (I-16).
 // Processes the OIDC callback, then redirects:
@@ -41,7 +42,12 @@ function RedirectHandler() {
 
 export default function AuthRedirectPage() {
   const [mounted, setMounted] = useState(false);
+  const { guest, isInitializing } = useAuth();
   useEffect(() => setMounted(true), []);
-  if (!mounted) return <p>Loading...</p>;
+  useEffect(() => {
+    if (guest) window.location.assign("/");
+  }, [guest]);
+  // Wait until the Tide adapter has loaded, so useAuthCallback runs inside TideCloakProvider.
+  if (!mounted || guest || isInitializing) return <p>Loading...</p>;
   return <RedirectHandler />;
 }

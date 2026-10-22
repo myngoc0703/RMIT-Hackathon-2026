@@ -1,6 +1,6 @@
 "use client";
 
-import { useTideCloak } from "@tidecloak/nextjs";
+import { useAuth } from "@/lib/auth/client";
 import { useCallback, useEffect, useState } from "react";
 import Nav from "@/components/Nav";
 import { ARTIST_ROLE } from "@/lib/roles";
@@ -14,7 +14,7 @@ type Found = { view: { viewer: string; signedIn: boolean; at: string; code: numb
 // Artist studio. The page checks the role only to decide what to show; every action is
 // re-checked on the server against the artist role in the Tide-signed token.
 export default function StudioPage() {
-  const { authenticated, isInitializing, login, hasRealmRole } = useTideCloak();
+  const { authenticated, isInitializing, login, hasRealmRole } = useAuth();
   const api = useApi();
   const [reqs, setReqs] = useState<Req[]>([]);
   const [leak, setLeak] = useState<{ state: "idle" | "reading" | "none" | "found" | "unknown"; found?: Found; code?: number }>({ state: "idle" });
