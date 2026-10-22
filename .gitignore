@@ -1,3 +1,6 @@
 .tide-pack/
 __pycache__/
 .DS_Store
+
+# Local tool settings (not part of the app)
+.claude/
