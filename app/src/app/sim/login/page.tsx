@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { browserSupportsWebAuthn, startAuthentication, startRegistration } from "@simplewebauthn/browser";
 import { setSimToken } from "@/lib/auth/client";
 
 // Simulated TideCloak sign-in. Mirrors the real flow: Tide account (sign in or create) → TideCloak's
@@ -51,17 +52,41 @@ export default function SimLoginPage() {
 
   async function usePasskey() {
     if (step.kind !== "passkey") return;
-    setBusy(true);
     setError(null);
-    await new Promise((r) => setTimeout(r, 700)); // the moment a real passkey prompt would take
-    const r = await post("/api/sim/passkey", { ticket: step.ticket });
-    setBusy(false);
-    if (!r.ok) {
-      setStep({ kind: "form" });
-      return setError(r.data.error ?? "Sign-in expired. Try again.");
+    if (!browserSupportsWebAuthn()) return setError("This browser doesn't support passkeys. Use Chrome, Safari, Edge or Firefox on localhost.");
+    setBusy(true);
+    try {
+      const o = await post("/api/sim/passkey/options", { ticket: step.ticket });
+      if (!o.ok) {
+        setStep({ kind: "form" });
+        return setError(o.data.error ?? "Sign-in expired. Try again.");
+      }
+      // Opens the device's real passkey prompt: Touch ID, Windows Hello, a phone or a security key.
+      const response =
+        o.data.mode === "register"
+          ? await startRegistration({ optionsJSON: o.data.options })
+          : await startAuthentication({ optionsJSON: o.data.options });
+      const v = await post("/api/sim/passkey/verify", { ticket: step.ticket, mode: o.data.mode, response });
+      if (!v.ok) {
+        setStep({ kind: "form" });
+        return setError(v.data.error ?? "Your passkey couldn't be checked. Sign in again.");
+      }
+      setSimToken(v.data.token);
+      window.location.assign(next);
+    } catch (e) {
+      const name = e instanceof Error ? e.name : "";
+      setError(
+        name === "NotAllowedError"
+          ? "The passkey prompt was closed or timed out. Try again."
+          : name === "InvalidStateError"
+            ? "This device already has a passkey for this account. Use it to sign in."
+            : name === "SecurityError"
+              ? "Passkeys only work on localhost or HTTPS. Open W2W at http://localhost:3000 on this computer."
+              : "The passkey didn't work. Try again."
+      );
+    } finally {
+      setBusy(false);
     }
-    setSimToken(r.data.token);
-    window.location.assign(next);
   }
 
   return (
@@ -102,11 +127,11 @@ export default function SimLoginPage() {
           <>
             <h1>{step.registered ? "Use your passkey" : "Register a passkey"}</h1>
             <p className="tide-copy">
-              Hi <b>{step.username}</b>. {step.registered ? "Confirm it's you with your passkey." : "W2W asks for a passkey after every sign-in. Set one up now."}
+              Hi <b>{step.username}</b>. {step.registered ? "Confirm it's you with your passkey." : "W2W asks for a passkey after every sign-in. Set one up now with Touch ID, Windows Hello, your phone or a security key."}
             </p>
             <button className="tide-passkey" onClick={usePasskey} disabled={busy} aria-label={step.registered ? "Use passkey" : "Register passkey"}>
               <span aria-hidden>◉</span>
-              {busy ? "Checking…" : step.registered ? "Use passkey" : "Register passkey"}
+              {busy ? "Waiting for your passkey…" : step.registered ? "Use passkey" : "Register passkey"}
             </button>
             {error && <p className="tide-error" role="alert">{error}</p>}
           </>

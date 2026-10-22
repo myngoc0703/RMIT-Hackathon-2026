@@ -10,6 +10,8 @@
     "init:backup": "bash scripts/init-backup.sh"
   },
   "dependencies": {
+    "@simplewebauthn/browser": "^13.3.0",
+    "@simplewebauthn/server": "^13.3.3",
     "@tidecloak/nextjs": "0.14.17",
     "jose": "^6.0.0",
     "next": "^16.0.0",
